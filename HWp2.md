@@ -33,25 +33,14 @@ Runtime Analysis:
 
 ### 2 c)
 
-For this section we create a metagraph of G. We will call this G'. For each node in G' we will sort all the values that it contains from G. Sorting will take(nlong(n)) because we sort every node in G. Let every node in G' additionally have a list that stores the max number of easter eggs collected with i eggs left where i are indices in the list. 
+Let EasterEggs(G, k) return the maximum number of eggs in the graph G by traversing at most k locations. We will store the maximum number of eggs in a 2D-array named MaxEggs[v][n], where v is the starting node and n is upper bound on the locations traversed. We are populating the array MaxEggs[v][n] by calling EasterEggs(G, k), where we traverse all the nodes and check all of the possible k locations to from the traversed node's neighbors. This will give us all the possibilities of the number of eggs collected using at most k locations.
 
-We know that each node depends on the children. Therefore, we must fill out the arrays within the nodes bottom up. Therefore we can reverse G' and call it G''. This is a O(n + m) operation
+EasterEggs(G, k):
+    MaxEggs[v from 0 to n-1][n from 1 to k] = 0
+    For i from n-1 to 0:
+        For j from 2 to k:
+            For all z neighbors of i:
+                MaxEggs[i][j] = max(MaxEggs[i][j], MaxEggs[z][j-1] + weight(i))
+    return max(MaxEggs[i][k] for i from 0 to n-1)
 
-we start a the source:
-
-let u be the source of G''. Therefore, 
-    
-    for i in array of u:
-        if i == 0:
-            a[i] = 0
-        else:
-            a[i] = summation of the top i elements in u
-Filling up the source of G'' (the sink of G') is the basecase.
-
-From here we must travel the incoming nodes of the source of G'
-
-    for n in incoming[u]:
-        //let a be the array located in n
-        for i in a:
-            if i == 0:
-                a[0] = max( for all arrays in outgoing vertices of u)
+    Since we traverse through all n nodes and all of the neighbors of that node, and each of these has a runtime of O(n), the runtime of those loops is O(n^2). Since we are also traversing through all k locations, the total runtime of the algorithm is O(k*n^2).
